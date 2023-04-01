@@ -8,23 +8,23 @@ from tensorflow import keras
 from tensorflow.keras.models import load_model
 from tensorflow.keras import preprocessing
 import time
-#import cv2
+import cv2
 
-fig = plt.figure()
+fig = plt.figure(figsize=(5,5))
 
 with open("custom.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 st.title('MNIST Predictor')
 
-st.markdown("Welcome to web application that classifies hand Writted Digits")
+st.markdown("Upload a grayscale image of a handwritten digit (28x28 pixels)")
 
 
 def main():
     file_uploaded = st.file_uploader("Choose File", type=["png","jpg","jpeg"])
     class_btn = st.button("Classify")
     if file_uploaded is not None:    
-        image = Image.open(file_uploaded)
+        image = tf.keras.preprocessing.image.load_img(file_uploaded, target_size=(28, 28), color_mode='grayscale')
         st.image(image, caption='Uploaded Image', use_column_width=True)
         
     if class_btn:
@@ -37,35 +37,20 @@ def main():
                 predictions = predict(image)
                 time.sleep(1)
                 st.success('Classified')
-                st.pyplot(fig)
                 st.write(predictions)
+                st.pyplot(fig)
 
 
 def predict(image):
     classifier_model = "model.h5"
-    IMAGE_SHAPE = (28, 28,1)
+    
     model = load_model(classifier_model,compile=False,)
-    
-    data = np.ndarray(shape=(1,28,28,1))
-    test_image = image
-    size=(28,28)
-    test_image = ImageOps.fit(test_image,size,Image.ANTIALIAS)
-    
-    image_array = np.asarray(test_image)
-    
-    normalized_image_array = image_array /255.0
-    
-    data = 1 - normalized_image_array
 
+    image = np.asarray(image)
+    image = np.expand_dims(image, axis=0)
+    image = image.astype('float32') / 255.0
     
-    #test_image = image.resize((28,28),Image.ANTIALIAS)
-    #test_image = preprocessing.image.img_to_array(test_image)
-    #test_image = test_image / 255.0
-    #test_image = np.expand_dims(test_image, axis=0)
-    
-    
-
-    predict_prob = model.predict(data)
+    predict_prob = model.predict(image)
     prediction=np.argmax(predict_prob,axis=1)
     
     result = f"The Given Image is of number: {prediction[0]}" 
