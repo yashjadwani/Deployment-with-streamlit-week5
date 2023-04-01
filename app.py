@@ -55,7 +55,8 @@ def predict(image):
     
     normalized_image_array = image_array /255.0
     
-    data[0]= normalized_image_array
+    data = 1 - normalized_image_array
+
     
     #test_image = image.resize((28,28),Image.ANTIALIAS)
     #test_image = preprocessing.image.img_to_array(test_image)
