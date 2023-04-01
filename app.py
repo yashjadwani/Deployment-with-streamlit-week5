@@ -42,7 +42,7 @@ def main():
 
 
 def predict(image):
-    classifier_model = "model.hs"
+    classifier_model = "model.h5"
     IMAGE_SHAPE = (28, 28,1)
     model = load_model(classifier_model,compile=False,)
     
@@ -63,13 +63,7 @@ def predict(image):
     #test_image = np.expand_dims(test_image, axis=0)
     
     
-    #test_image = np.repeat(test_image,-1, axis = 0)
-    class_names = ['No retinopathy: class 0',
-          'Mild retinopathy: class 1',
-          'Moderate retinopathy: class 2',
-          'Severe retinopathy: class 3',
-          'Proliferative: class 4 '
-          ]
+
     predict_prob = model.predict(data)
     prediction=np.argmax(predict_prob,axis=1)
     
